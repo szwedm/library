@@ -11,3 +11,29 @@
     
     
   n. Potwierdzenie mailowe (Java Email Service)*  
+
+CreateUserRequest 
+{
+"email":"blabla@mail.com",
+"name":"M Szwed",
+"password":"mojeHasło!@3"
+}
+
+ChangeNameRequest
+{
+"name":"nowy name"
+}
+
+ChangePasswordRequest
+{
+"oldPassword":"old",
+"newPassword":"new"
+}
+
+UserResponse 
+{
+"id":"UUID",
+"email":"email",
+"name":"name",
+"active":"true"
+}
