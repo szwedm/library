@@ -1,33 +1,36 @@
 package com.msz.library;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(unique = true, nullable = false)
+    private String id;
 
     private String name;
     private String email;
     private char[] pass;
+    private boolean active;
 
     protected User() {
     }
 
     public User(String name, String email, String pass) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.email = email;
         this.pass = pass.toCharArray();
+        this.active = true;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -41,6 +44,12 @@ public class User implements Serializable {
 
     public char[] getPass() {
         return pass;
+    }
+
+    public boolean isActive() { return active; }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
