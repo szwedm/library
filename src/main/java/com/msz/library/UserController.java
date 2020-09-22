@@ -39,7 +39,7 @@ public class UserController {
         //service call to get one user by id
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     void deleteUser(@PathVariable String id) {
 
