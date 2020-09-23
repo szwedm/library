@@ -1,5 +1,10 @@
 package com.msz.library;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Objects;
+
 public final class UserResponse {
 
     private final String id;
@@ -7,7 +12,8 @@ public final class UserResponse {
     private final String email;
     private final boolean active;
 
-    private UserResponse(String id, String name, String email, boolean active) {
+    @JsonCreator
+    private UserResponse(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("email") String email, @JsonProperty("active") boolean active) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -32,5 +38,28 @@ public final class UserResponse {
 
     public static UserResponse create(String id, String name, String email, boolean active) {
         return new UserResponse(id, name, email, active);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserResponse that = (UserResponse) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "UserResponse{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", active=" + active +
+                '}';
     }
 }
