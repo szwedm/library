@@ -3,12 +3,14 @@ package com.msz.library;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-@Entity
-public class User implements Serializable {
+@Entity(name = "user")
+@Table(name = "users")
+public class UserEntity implements Serializable {
 
     @Id
     @Column(unique = true, nullable = false)
@@ -16,17 +18,17 @@ public class User implements Serializable {
 
     private String name;
     private String email;
-    private char[] pass;
+    private char[] password;
     private boolean active;
 
-    protected User() {
+    protected UserEntity() {
     }
 
-    public User(String name, String email, String pass) {
+    public UserEntity(String name, String email, char[] password) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.email = email;
-        this.pass = pass.toCharArray();
+        this.password = password;
         this.active = true;
     }
 
@@ -43,7 +45,7 @@ public class User implements Serializable {
     }
 
     public char[] getPass() {
-        return pass;
+        return password;
     }
 
     public boolean isActive() { return active; }
@@ -56,8 +58,8 @@ public class User implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id.equals(user.id);
+        UserEntity userEntity = (UserEntity) o;
+        return id.equals(userEntity.id);
     }
 
     @Override

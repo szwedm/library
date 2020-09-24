@@ -13,5 +13,9 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-
+    public String createUser(CreateUserRequest userRequest) {
+        UserEntity userEntity = new UserEntity(userRequest.getName(), userRequest.getEmail(), userRequest.getPassword());
+        UserEntity user = userRepository.save(userEntity);
+        return user.getId();
+    }
 }

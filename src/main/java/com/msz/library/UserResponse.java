@@ -36,8 +36,8 @@ public final class UserResponse {
         return active;
     }
 
-    public static UserResponse create(String id, String name, String email, boolean active) {
-        return new UserResponse(id, name, email, active);
+    public static UserResponse create(UserEntity userEntity) {
+        return new UserResponse(userEntity.getId(), userEntity.getName(), userEntity.getEmail(), userEntity.isActive());
     }
 
     @Override

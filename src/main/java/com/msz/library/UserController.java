@@ -2,6 +2,7 @@ package com.msz.library;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,25 +19,23 @@ public class UserController {
     }
 
     @GetMapping("/")
-    List<User> getAllUsers() {
-        //service call to get all users
+    ResponseEntity<List<UserEntity>> getAllUsers() {
+        return null;
     }
 
     @PostMapping("/")
-    @ResponseStatus(HttpStatus.CREATED)
-    User createUser(@RequestBody User newUser) {
-        //service call to save user in db
+    ResponseEntity<String> createUser(@RequestBody CreateUserRequest userRequest) {
+        return new ResponseEntity(userService.createUser(userRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    User getUser(@PathVariable String id) {
-        //service call to get one user by id
+    ResponseEntity<UserResponse> getUser(@PathVariable String id) {
+        return null;
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    User updateUser(@PathVariable Long id) {
-        //service call to get one user by id
+    ResponseEntity<UserResponse> updateUser(@PathVariable Long id) {
+        return null;
     }
 
     @DeleteMapping("/{id}")

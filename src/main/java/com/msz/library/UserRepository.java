@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
-    User findById(long id);
+    UserEntity findById(long id);
 
-    User findByEmail(String email);
+    UserEntity findByEmail(String email);
 
-    List<User> findByName(String name);
+    List<UserEntity> findByName(String name);
 }
