@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping("/")
     ResponseEntity<List<UserResponse>> getAllUsers() {
-        return null;
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @PostMapping("/")
