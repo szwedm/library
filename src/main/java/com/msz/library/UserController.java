@@ -19,13 +19,13 @@ public class UserController {
     }
 
     @GetMapping("/")
-    ResponseEntity<List<UserEntity>> getAllUsers() {
+    ResponseEntity<List<UserResponse>> getAllUsers() {
         return null;
     }
 
     @PostMapping("/")
-    ResponseEntity<String> createUser(@RequestBody CreateUserRequest userRequest) {
-        return new ResponseEntity(userService.createUser(userRequest), HttpStatus.CREATED);
+    ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest userRequest) {
+        return new ResponseEntity<>(userService.createUser(userRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
