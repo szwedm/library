@@ -18,12 +18,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     ResponseEntity<List<UserResponse>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping
     ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest userRequest) {
         return new ResponseEntity<>(userService.createUser(userRequest), HttpStatus.CREATED);
     }
