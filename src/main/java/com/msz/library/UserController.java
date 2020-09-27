@@ -30,7 +30,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     ResponseEntity<UserResponse> getUser(@PathVariable String id) {
-        return null;
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.FOUND);
     }
 
     @PutMapping("/{id}")
@@ -41,6 +41,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     void deleteUser(@PathVariable String id) {
-
+        userService.deactivateUser(id);
     }
 }

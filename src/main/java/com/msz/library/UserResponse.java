@@ -13,7 +13,10 @@ public final class UserResponse {
     private final boolean active;
 
     @JsonCreator
-    private UserResponse(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("email") String email, @JsonProperty("active") boolean active) {
+    private UserResponse(@JsonProperty("id") String id,
+                         @JsonProperty("name") String name,
+                         @JsonProperty("email") String email,
+                         @JsonProperty("active") boolean active) {
         this.id = id;
         this.name = name;
         this.email = email;

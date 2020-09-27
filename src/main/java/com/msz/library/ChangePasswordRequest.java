@@ -11,7 +11,8 @@ public final class ChangePasswordRequest {
     private final char[] newPassword;
 
     @JsonCreator
-    private ChangePasswordRequest(@JsonProperty("oldPassword") char[] oldPassword, @JsonProperty("newPassword") char[] newPassword) {
+    private ChangePasswordRequest(@JsonProperty("oldPassword") char[] oldPassword,
+                                  @JsonProperty("newPassword") char[] newPassword) {
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
     }

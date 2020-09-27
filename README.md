@@ -37,3 +37,17 @@ UserResponse
 "name":"name",
 "active":"true"
 }
+
+
+##Streams
+1. Map
+2. Filter
+3. Collectors
+4. Joining
+5. ForEach
+##Optional
+1. Map
+2. Or
+3. OrElse
+4. ofNullable
+5. ifPresentOrElse
