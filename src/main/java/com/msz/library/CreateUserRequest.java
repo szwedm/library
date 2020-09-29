@@ -3,13 +3,19 @@ package com.msz.library;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
 import java.util.Objects;
 
 public final class CreateUserRequest {
 
+    @NotBlank(message = "name is required")
     private final String name;
+    @NotBlank(message = "email is required")
+    @Email
     private final String email;
+    @NotBlank(message = "password is required")
     private final char[] password;
 
     @JsonCreator

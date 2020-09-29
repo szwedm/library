@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest userRequest) {
+    ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest) {
         logger.info("POST request - create a new user");
         return new ResponseEntity<>(userService.createUser(userRequest), HttpStatus.CREATED);
     }
