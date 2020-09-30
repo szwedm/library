@@ -47,12 +47,13 @@ public class UserService {
     }
 
     public UserResponse getUser(String id) {
-        // Optional
-        return UserResponse.create(userRepository.findById(id).get());
+        return UserResponse.create(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
     public void deactivateUser(String id) {
-        // Optional
-        userRepository.findById(id).get().setActive(false);
+        userRepository.findById(id).map(user -> {
+            user.setActive(false);
+            return userRepository.save(user);
+        });
     }
 }
