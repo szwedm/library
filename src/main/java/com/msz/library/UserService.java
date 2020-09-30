@@ -17,6 +17,9 @@ public class UserService {
     }
 
     public UserResponse createUser(CreateUserRequest userRequest) {
+        userRepository.findByEmail(userRequest.getEmail()).ifPresent((existingUser) -> {
+            throw new UserAlreadyExistsException(existingUser.getEmail());
+        });
         UserEntity userEntity = new UserEntity(userRequest.getName(), userRequest.getEmail(), userRequest.getPassword());
         UserEntity user = userRepository.save(userEntity);
         return UserResponse.create(user);
