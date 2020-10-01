@@ -4,18 +4,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name = "user")
-@Table(name = "users")
-public class UserEntity implements Serializable {
+@Table(name = "user")
+public class UserEntity {
 
     @Id
     @Column(unique = true, nullable = false)
     private String id;
-
     private String name;
     private String email;
     private char[] password;
@@ -29,7 +27,6 @@ public class UserEntity implements Serializable {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.active = true;
     }
 
     public String getId() {
