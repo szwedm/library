@@ -51,3 +51,8 @@ UserResponse
 3. OrElse
 4. ofNullable
 5. ifPresentOrElse
+
+
+# Testy
+Controller - restassured
+Service - JUnit5, Mockito
