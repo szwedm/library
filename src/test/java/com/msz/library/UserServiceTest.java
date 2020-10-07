@@ -47,12 +47,12 @@ class UserServiceTest {
 
         UserResponse response = UserResponse.create(entity);
 
-        when(repository.save(any())).thenReturn(entity);
+        when(repository.save(any(UserEntity.class))).thenReturn(entity);
         UserEntity savedUser = repository.save(entity);
         UserResponse createdResponse = UserResponse.create(savedUser);
 
         assertEquals(response, createdResponse);
-        verify(repository, times(1)).save(any());
+        verify(repository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
@@ -74,29 +74,29 @@ class UserServiceTest {
     void getUser() {
         UserEntity user = new UserEntity("User", "user@mail.com", "password123".toCharArray());
 
-        when(repository.findById(anyString())).thenReturn(Optional.of(user));
-        UserEntity foundUser = repository.findById("ffff").get();
+        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        UserEntity foundUser = repository.findById(user.getId()).get();
 
         assertEquals(user, foundUser);
-        verify(repository, times(1)).findById("ffff");
+        verify(repository, times(1)).findById(user.getId());
     }
 
     @Test
     void deactivateUser() {
         UserEntity user = new UserEntity("User", "user@mail.com", "password123".toCharArray());
 
-        when(repository.findById(anyString())).thenReturn(Optional.of(user));
-        UserEntity foundUser = repository.findById("ffff").get();
+        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        UserEntity foundUser = repository.findById(user.getId()).get();
 
         assertEquals(user, foundUser);
-        verify(repository, times(1)).findById("ffff");
+        verify(repository, times(1)).findById(user.getId());
 
         foundUser.setActive(false);
 
-        when(repository.save(any())).thenReturn(foundUser);
+        when(repository.save(any(UserEntity.class))).thenReturn(foundUser);
         UserEntity deactivatedUser = repository.save(foundUser);
 
         assertEquals(foundUser, deactivatedUser);
-        verify(repository, times(1)).save(any());
+        verify(repository, times(1)).save(any(UserEntity.class));
     }
 }
