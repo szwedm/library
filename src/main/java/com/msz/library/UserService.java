@@ -36,14 +36,6 @@ public class UserService {
     }
 
     public List<UserResponse> getAllUsers() {
-        /*
-        List<UserEntity> userEntities = new ArrayList<>(userRepository.findAll());
-        List<UserResponse> usersResponse = new ArrayList<>(userEntities.size());
-        userEntities.forEach(userEntity -> {
-            usersResponse.add(UserResponse.create(userEntity));
-        });
-        return usersResponse;
-        */
         return userRepository.findAll().stream()
                 .map(UserResponse::create)
                 .collect(Collectors.toUnmodifiableList());
