@@ -46,9 +46,8 @@ public class UserService {
     }
 
     public void deactivateUser(String id) {
-        userRepository.findById(id).map(user -> {
-            user.setActive(false);
-            return userRepository.save(user);
-        });
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        userEntity.setActive(false);
+        userRepository.save(userEntity);
     }
 }

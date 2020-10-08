@@ -1,40 +1,29 @@
 package com.msz.library;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    @InjectMocks
     UserService service;
 
     @Mock
     UserRepository repository;
 
-    @BeforeAll
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-        service = new UserService(repository);
-    }
-
-    @BeforeEach
-    void preTest() {
-        reset(repository);
-    }
-
     @Test
-    void createUser() {
+    void test_create_user_successful() {
         CreateUserRequest userRequest = CreateUserRequest.create(
                 "Fake User",
                 "fake.user@mail.com",
@@ -45,18 +34,35 @@ class UserServiceTest {
                 userRequest.getEmail(),
                 userRequest.getPassword());
 
-        UserResponse response = UserResponse.create(entity);
-
         when(repository.save(any(UserEntity.class))).thenReturn(entity);
-        UserEntity savedUser = repository.save(entity);
-        UserResponse createdResponse = UserResponse.create(savedUser);
 
-        assertEquals(response, createdResponse);
+        UserResponse userResponse = service.createUser(userRequest);
+        assertNotNull(userResponse);
+        assertEquals(userRequest.getName(), userResponse.getName());
+        assertEquals(userRequest.getEmail(), userResponse.getEmail());
+
         verify(repository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
-    void getAllUsers() {
+    void test_create_user_throws_UserAlreadyExistsException() {
+        CreateUserRequest userRequest = CreateUserRequest.create(
+                "Fake User",
+                "fake.user@mail.com",
+                "fakepass".toCharArray());
+
+        UserEntity entity = new UserEntity(
+                userRequest.getName(),
+                userRequest.getEmail(),
+                userRequest.getPassword());
+
+        when(repository.findByEmail(anyString())).thenReturn(Optional.of(entity));
+
+        assertThrows(UserAlreadyExistsException.class, () -> service.createUser(userRequest));
+    }
+
+    @Test
+    void test_get_all_users() {
         UserEntity user1 = new UserEntity("Mr User", "mruser@mail.com", "password123".toCharArray());
         UserEntity user2 = new UserEntity("Mrs User", "mrsuser@mail.com", "123password".toCharArray());
         List<UserEntity> userData = new ArrayList<>();
@@ -64,39 +70,49 @@ class UserServiceTest {
         userData.add(user2);
 
         when(repository.findAll()).thenReturn(userData);
-        List<UserEntity> users = repository.findAll();
+        assertEquals(service.getAllUsers().size(), userData.size());
 
-        assertEquals(users.size(), 2);
         verify(repository, times(1)).findAll();
     }
 
     @Test
-    void getUser() {
-        UserEntity user = new UserEntity("User", "user@mail.com", "password123".toCharArray());
+    void test_get_user_successful() {
+        UserEntity userEntity = new UserEntity("User", "user@mail.com", "password123".toCharArray());
 
-        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
-        UserEntity foundUser = repository.findById(user.getId()).get();
+        when(repository.findById(anyString())).thenReturn(Optional.of(userEntity));
+        UserResponse userResponse = service.getUser(anyString());
 
-        assertEquals(user, foundUser);
-        verify(repository, times(1)).findById(user.getId());
+        assertNotNull(userResponse);
+        assertEquals(userEntity.getName(), userResponse.getName());
+        assertEquals(userEntity.getEmail(), userResponse.getEmail());
+
+        verify(repository, times(1)).findById(anyString());
     }
 
     @Test
-    void deactivateUser() {
-        UserEntity user = new UserEntity("User", "user@mail.com", "password123".toCharArray());
+    void test_get_user_throws_UserNotFoundException() {
+        when(repository.findById(anyString())).thenReturn(Optional.empty());
 
-        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
-        UserEntity foundUser = repository.findById(user.getId()).get();
+        assertThrows(UserNotFoundException.class, () -> service.getUser(anyString()));
+    }
 
-        assertEquals(user, foundUser);
-        verify(repository, times(1)).findById(user.getId());
+    @Test
+    void test_deactivate_user_successful() {
+        UserEntity userEntity = new UserEntity("User", "user@mail.com", "password123".toCharArray());
 
-        foundUser.setActive(false);
+        when(repository.findById(anyString())).thenReturn(Optional.of(userEntity));
+        service.deactivateUser(anyString());
 
-        when(repository.save(any(UserEntity.class))).thenReturn(foundUser);
-        UserEntity deactivatedUser = repository.save(foundUser);
+        assertFalse(repository.findById(anyString()).get().isActive());
 
-        assertEquals(foundUser, deactivatedUser);
+        verify(repository, times(2)).findById(anyString());
         verify(repository, times(1)).save(any(UserEntity.class));
+    }
+
+    @Test
+    void test_deactivate_user_throws_UserNotFoundException() {
+        when(repository.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> service.deactivateUser(anyString()));
     }
 }
