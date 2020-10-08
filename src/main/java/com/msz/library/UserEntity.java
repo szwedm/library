@@ -27,6 +27,7 @@ public class UserEntity {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.active = false;
     }
 
     public String getId() {
@@ -39,10 +40,6 @@ public class UserEntity {
 
     public String getEmail() {
         return email;
-    }
-
-    public char[] getPass() {
-        return password;
     }
 
     public boolean isActive() { return active; }

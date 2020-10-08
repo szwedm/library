@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,12 +98,33 @@ class UserServiceTest {
     }
 
     @Test
-    void test_deactivate_user_successful() {
+    void test_activate_user_successful() {
         UserEntity userEntity = new UserEntity("User", "user@mail.com", "password123".toCharArray());
 
         when(repository.findById(anyString())).thenReturn(Optional.of(userEntity));
-        service.deactivateUser(anyString());
+        service.activateUser(anyString());
 
+        assertTrue(repository.findById(anyString()).get().isActive());
+
+        verify(repository, times(2)).findById(anyString());
+        verify(repository, times(1)).save(any(UserEntity.class));
+    }
+
+    @Test
+    void test_activate_user_throws_UserNotFoundException() {
+        when(repository.findById(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> service.deactivateUser(anyString()));
+    }
+
+    @Test
+    void test_deactivate_user_successful() {
+        UserEntity userEntity = new UserEntity("User", "user@mail.com", "password123".toCharArray());
+        ReflectionTestUtils.setField(userEntity, "active", true);
+
+        when(repository.findById(anyString())).thenReturn(Optional.of(userEntity));
+
+        service.deactivateUser(anyString());
         assertFalse(repository.findById(anyString()).get().isActive());
 
         verify(repository, times(2)).findById(anyString());

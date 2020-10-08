@@ -45,9 +45,15 @@ public class UserService {
         return UserResponse.create(userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
 
-    public void deactivateUser(String id) {
+    public UserEntity deactivateUser(String id) {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         userEntity.setActive(false);
-        userRepository.save(userEntity);
+        return userRepository.save(userEntity);
+    }
+
+    public UserEntity activateUser(String id) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        userEntity.setActive(true);
+        return userRepository.save(userEntity);
     }
 }
