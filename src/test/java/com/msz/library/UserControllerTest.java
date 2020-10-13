@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -32,7 +33,9 @@ class UserControllerTest {
 
     @BeforeEach
     void init() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new UserNotFoundAdvice(), new UserAlreadyExistsAdvice())
+                .build();
     }
 
     @Test
@@ -55,5 +58,91 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[1].email").value("user2@email.com"));
 
         verify(service, times(1)).getAllUsers();
+    }
+
+    @Test
+    void test_createUser_successful() throws Exception {
+        CreateUserRequest userRequest = CreateUserRequest.create("User", "user@email.com", "password".toCharArray());
+        UserEntity userEntity = new UserEntity(userRequest.getName(), userRequest.getEmail(), userRequest.getPassword());
+        UserResponse userResponse = UserResponse.create(userEntity);
+
+        when(service.createUser(any(CreateUserRequest.class))).thenReturn(userResponse);
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content("{\"name\":\"User\",\"email\":\"user@email.com\",\"password\":\"password\"}"))
+                .andDo(log())
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.email").value("user@email.com"));
+
+        verify(service, times(1)).createUser(any(CreateUserRequest.class));
+    }
+
+    @Test
+    void test_createUser_userAlreadyExists() throws Exception {
+        CreateUserRequest userRequest = CreateUserRequest.create("User", "user@email.com", "password".toCharArray());
+
+        when(service.createUser(any(CreateUserRequest.class))).thenThrow(new UserAlreadyExistsException(userRequest.getEmail()));
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content("{\"name\":\"User\",\"email\":\"user@email.com\",\"password\":\"password\"}"))
+                .andDo(log())
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void test_getUser_successful() throws Exception {
+        UserEntity userEntity = new UserEntity("User", "user@email.com", "password".toCharArray());
+        UserResponse userResponse = UserResponse.create(userEntity);
+
+        when(service.getUser(anyString())).thenReturn(userResponse);
+
+        mockMvc.perform(get("/users/{id}", userEntity.getId()))
+                .andDo(log())
+                .andExpect(status().isFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(userEntity.getId()));
+
+        verify(service, times(1)).getUser(anyString());
+    }
+
+    @Test
+    void test_getUser_userNotFound() throws Exception {
+        when(service.getUser(anyString())).thenThrow(new UserNotFoundException(anyString()));
+
+        mockMvc.perform(get("/users/{id}", "123"))
+                .andDo(log())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void test_deleteUser_successful() throws Exception {
+        UserEntity userEntity = new UserEntity("User", "user@email.com", "password".toCharArray());
+        userEntity.setActive(true);
+
+        when(service.deactivateUser(anyString())).then(invocation -> {
+            userEntity.setActive(false);
+            return userEntity;
+        });
+
+        mockMvc.perform(delete("/users/{id}", userEntity.getId()))
+                .andDo(log())
+                .andExpect(status().isOk())
+                .andExpect(result -> assertFalse(userEntity.isActive()));
+
+        verify(service, times(1)).deactivateUser(anyString());
+    }
+
+    @Test
+    void test_deleteUser_userNotFound() throws Exception {
+        when(service.deactivateUser(anyString())).thenThrow(new UserNotFoundException(anyString()));
+
+        mockMvc.perform(delete("/users/{id}", "123"))
+                .andDo(log())
+                .andExpect(status().isNotFound());
     }
 }
