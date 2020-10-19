@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name = "user")
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity {
 
     @Id
@@ -40,6 +40,10 @@ public class UserEntity {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return new String(password);
     }
 
     public boolean isActive() { return active; }
