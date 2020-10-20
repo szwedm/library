@@ -19,4 +19,10 @@ public class CustomBasicAuthenticationEntryPoint extends BasicAuthenticationEntr
         PrintWriter writer = response.getWriter();
         writer.println("HTTP Status 401 - " + authException.getMessage());
     }
+
+    @Override
+    public void afterPropertiesSet() {
+        setRealmName("Library");
+        super.afterPropertiesSet();
+    }
 }
