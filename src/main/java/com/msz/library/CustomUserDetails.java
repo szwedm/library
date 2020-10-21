@@ -2,19 +2,18 @@ package com.msz.library;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
     private UserEntity userEntity;
-    private final BCryptPasswordEncoder passwordEncoder;
 
     public CustomUserDetails(UserEntity userEntity) {
         this.userEntity = userEntity;
-        this.passwordEncoder = new BCryptPasswordEncoder();
     }
+
+    public String getId() {return userEntity.getId(); }
 
     @Override
     public String getUsername() {
@@ -22,9 +21,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return passwordEncoder.encode(userEntity.getPassword());
-    }
+    public String getPassword() { return userEntity.getPassword(); }
 
     @Override
     public boolean isEnabled() {
