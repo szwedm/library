@@ -3,6 +3,7 @@ package com.msz.library;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,32 +23,55 @@ public class UserController {
     }
 
     @GetMapping
-    ResponseEntity<List<UserResponse>> getAllUsers() {
+    ResponseEntity<List<UserResponse>> getAllUsers(Authentication auth) {
         logger.info("GET request - get all users");
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        if (auth.getName().equals("admin")) {
+            return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping
-    ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest) {
+    ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest userRequest, Authentication auth) {
         logger.info("POST request - create a new user");
-        return new ResponseEntity<>(userService.createUser(userRequest), HttpStatus.CREATED);
+        if (auth.getName().equals("admin")) {
+            return new ResponseEntity<>(userService.createUser(userRequest), HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserResponse> getUser(@PathVariable String id) {
+    ResponseEntity<UserResponse> getUser(@PathVariable String id, Authentication auth) {
         logger.info("GET request - get user by ID");
-        return new ResponseEntity<>(userService.getUser(id), HttpStatus.FOUND);
+        if (auth.getName().equals("admin")) {
+            return new ResponseEntity<>(userService.getUser(id), HttpStatus.FOUND);
+        }
+        CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
+        if (user.getId().equals(id)) {
+            return new ResponseEntity<>(userService.getUser(id), HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<UserResponse> updateUser(@PathVariable Long id) {
-        return null;
+    @PutMapping("/{id}/change-password")
+    ResponseEntity<UserResponse> updateUserPassword(@PathVariable String id, @RequestBody ChangePasswordRequest passwordRequest, Authentication auth) {
+        logger.info("PUT request - update user by ID");
+        if (auth.getName().equals("admin")) {
+            return new ResponseEntity<>(userService.changeUserPassword(id, passwordRequest), HttpStatus.ACCEPTED);
+        }
+        CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
+        if (user.getId().equals(id)) {
+            return new ResponseEntity<>(userService.changeUserPassword(id, passwordRequest), HttpStatus.ACCEPTED);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    void deleteUser(@PathVariable String id) {
+    void deleteUser(@PathVariable String id, Authentication auth) {
         logger.info("DELETE request - deactivate user by ID");
-        userService.deactivateUser(id);
+        if (auth.getName().equals("admin")) {
+            userService.deactivateUser(id);
+        }
     }
 }

@@ -1,11 +1,7 @@
 package com.msz.library;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,26 +9,26 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
-@Primary
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
     private static final Logger logger = Logger.getLogger("UserService");
 
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.encoder = encoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponse createUser(CreateUserRequest userRequest) {
         userRepository.findByEmail(userRequest.getEmail()).ifPresent((existingUser) -> {
             throw new UserAlreadyExistsException(existingUser.getEmail());
         });
-        UserEntity userEntity = new UserEntity(userRequest.getName(),
+        UserEntity userEntity = new UserEntity(
+                userRequest.getName(),
                 userRequest.getEmail(),
-                encoder.encode(userRequest.getPassword().toString()).toCharArray());
+                passwordEncoder.encode(new String(userRequest.getPassword())).toCharArray());
         UserEntity user = userRepository.save(userEntity);
         return UserResponse.create(user);
     }
@@ -42,9 +38,14 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
-    public UserResponse changeUserPassword(ChangePasswordRequest passwordRequest) {
-        // TO DO
-        return null;
+    public UserResponse changeUserPassword(String id, ChangePasswordRequest passwordRequest) {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        if (passwordEncoder.matches(new String(passwordRequest.getOldPassword()), new String(userEntity.getPassword()))) {
+            userEntity.setPassword(passwordEncoder.encode(new String(passwordRequest.getNewPassword())).toCharArray());
+            return UserResponse.create(userRepository.save(userEntity));
+        } else {
+            throw new PasswordsDoNotMatchException();
+        }
     }
 
     public List<UserResponse> getAllUsers() {
@@ -67,12 +68,5 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         userEntity.setActive(true);
         return userRepository.save(userEntity);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        logger.info("Found username in DB: " + userEntity.getEmail());
-        return new CustomUserDetails(userEntity);
     }
 }

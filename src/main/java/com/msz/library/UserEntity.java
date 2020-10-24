@@ -42,8 +42,10 @@ public class UserEntity {
         return email;
     }
 
-    public String getPassword() {
-        return new String(password);
+    public char[] getPassword() { return password; }
+
+    public void setPassword(char[] password) {
+        this.password = password;
     }
 
     public boolean isActive() { return active; }

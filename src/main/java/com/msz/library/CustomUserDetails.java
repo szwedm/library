@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -21,12 +22,10 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public String getPassword() { return userEntity.getPassword(); }
+    public String getPassword() { return new String(userEntity.getPassword()); }
 
     @Override
-    public boolean isEnabled() {
-        return !(userEntity.isActive());
-    }
+    public boolean isEnabled() { return true; }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -45,6 +44,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.emptyList();
     }
 }
