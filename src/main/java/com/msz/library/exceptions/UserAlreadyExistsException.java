@@ -1,8 +1,8 @@
-package com.msz.library;
+package com.msz.library.exceptions;
 
 public class UserAlreadyExistsException extends RuntimeException {
 
-    UserAlreadyExistsException(String email) {
+    public UserAlreadyExistsException(String email) {
         super("User with provided email: " + email + " already exists");
     }
 }

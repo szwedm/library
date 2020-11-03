@@ -1,5 +1,6 @@
-package com.msz.library;
+package com.msz.library.security;
 
+import com.msz.library.domain.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -1,5 +1,6 @@
-package com.msz.library;
+package com.msz.library.advices;
 
+import com.msz.library.exceptions.PasswordsDoNotMatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,12 +8,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class UserNotFoundAdvice {
+public class PasswordsDoNotMatchAdvice {
 
     @ResponseBody
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    String userNotFoundHandler(UserNotFoundException ex) {
+    @ExceptionHandler(PasswordsDoNotMatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String passwordsDoNotMatch(PasswordsDoNotMatchException ex) {
         return ex.getMessage();
     }
 }

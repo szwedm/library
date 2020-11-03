@@ -1,10 +1,17 @@
-package com.msz.library;
+package com.msz.library.services;
 
+import com.msz.library.domain.CreateUserRequest;
+import com.msz.library.domain.UserEntity;
+import com.msz.library.domain.UserResponse;
+import com.msz.library.exceptions.UserAlreadyExistsException;
+import com.msz.library.exceptions.UserNotFoundException;
+import com.msz.library.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -23,6 +30,9 @@ class UserServiceTest {
     @Mock
     UserRepository repository;
 
+    @Mock
+    PasswordEncoder passwordEncoder;
+
     @Test
     void test_create_user_successful() {
         CreateUserRequest userRequest = CreateUserRequest.create(
@@ -35,6 +45,7 @@ class UserServiceTest {
                 userRequest.getEmail(),
                 userRequest.getPassword());
 
+        when(passwordEncoder.encode(anyString())).thenReturn("fakepass");
         when(repository.save(any(UserEntity.class))).thenReturn(entity);
 
         UserResponse userResponse = service.createUser(userRequest);

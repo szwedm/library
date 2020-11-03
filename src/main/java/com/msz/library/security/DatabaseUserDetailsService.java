@@ -1,5 +1,7 @@
-package com.msz.library;
+package com.msz.library.security;
 
+import com.msz.library.domain.UserEntity;
+import com.msz.library.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

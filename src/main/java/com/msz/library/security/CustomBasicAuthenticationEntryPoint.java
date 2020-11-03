@@ -1,4 +1,4 @@
-package com.msz.library;
+package com.msz.library.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;

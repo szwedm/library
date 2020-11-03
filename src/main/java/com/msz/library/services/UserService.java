@@ -1,5 +1,10 @@
-package com.msz.library;
+package com.msz.library.services;
 
+import com.msz.library.domain.*;
+import com.msz.library.exceptions.PasswordsDoNotMatchException;
+import com.msz.library.exceptions.UserAlreadyExistsException;
+import com.msz.library.exceptions.UserNotFoundException;
+import com.msz.library.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

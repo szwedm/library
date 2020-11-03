@@ -1,4 +1,4 @@
-package com.msz.library;
+package com.msz.library.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

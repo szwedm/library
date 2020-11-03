@@ -1,5 +1,13 @@
-package com.msz.library;
+package com.msz.library.controllers;
 
+import com.msz.library.advices.UserAlreadyExistsAdvice;
+import com.msz.library.advices.UserNotFoundAdvice;
+import com.msz.library.domain.CreateUserRequest;
+import com.msz.library.domain.UserEntity;
+import com.msz.library.domain.UserResponse;
+import com.msz.library.exceptions.UserAlreadyExistsException;
+import com.msz.library.exceptions.UserNotFoundException;
+import com.msz.library.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,6 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -21,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class UserControllerTest {
 
     private MockMvc mockMvc;
@@ -35,6 +47,7 @@ class UserControllerTest {
     void init() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new UserNotFoundAdvice(), new UserAlreadyExistsAdvice())
+                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .build();
     }
 
@@ -50,7 +63,8 @@ class UserControllerTest {
 
         when(service.getAllUsers()).thenReturn(userResponses);
 
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/users")
+                .principal(new UsernamePasswordAuthenticationToken("admin", "")))
                 .andDo(log())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -71,7 +85,8 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
-                .content("{\"name\":\"User\",\"email\":\"user@email.com\",\"password\":\"password\"}"))
+                .content("{\"name\":\"User\",\"email\":\"user@email.com\",\"password\":\"password\"}")
+                .principal(new UsernamePasswordAuthenticationToken("admin", "")))
                 .andDo(log())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -89,7 +104,8 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
-                .content("{\"name\":\"User\",\"email\":\"user@email.com\",\"password\":\"password\"}"))
+                .content("{\"name\":\"User\",\"email\":\"user@email.com\",\"password\":\"password\"}")
+                .principal(new UsernamePasswordAuthenticationToken("admin", "")))
                 .andDo(log())
                 .andExpect(status().isConflict());
     }
@@ -101,7 +117,8 @@ class UserControllerTest {
 
         when(service.getUser(anyString())).thenReturn(userResponse);
 
-        mockMvc.perform(get("/users/{id}", userEntity.getId()))
+        mockMvc.perform(get("/users/{id}", userEntity.getId())
+                .principal(new UsernamePasswordAuthenticationToken("admin", "")))
                 .andDo(log())
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -114,7 +131,8 @@ class UserControllerTest {
     void test_getUser_userNotFound() throws Exception {
         when(service.getUser(anyString())).thenThrow(new UserNotFoundException(anyString()));
 
-        mockMvc.perform(get("/users/{id}", "123"))
+        mockMvc.perform(get("/users/{id}", "123")
+                .principal(new UsernamePasswordAuthenticationToken("admin", "")))
                 .andDo(log())
                 .andExpect(status().isNotFound());
     }
@@ -129,7 +147,8 @@ class UserControllerTest {
             return userEntity;
         });
 
-        mockMvc.perform(delete("/users/{id}", userEntity.getId()))
+        mockMvc.perform(delete("/users/{id}", userEntity.getId())
+                .principal(new UsernamePasswordAuthenticationToken("admin", "")))
                 .andDo(log())
                 .andExpect(status().isOk())
                 .andExpect(result -> assertFalse(userEntity.isActive()));
@@ -141,7 +160,8 @@ class UserControllerTest {
     void test_deleteUser_userNotFound() throws Exception {
         when(service.deactivateUser(anyString())).thenThrow(new UserNotFoundException(anyString()));
 
-        mockMvc.perform(delete("/users/{id}", "123"))
+        mockMvc.perform(delete("/users/{id}", "123")
+                .principal(new UsernamePasswordAuthenticationToken("admin", "")))
                 .andDo(log())
                 .andExpect(status().isNotFound());
     }

@@ -1,5 +1,6 @@
-package com.msz.library;
+package com.msz.library.advices;
 
+import com.msz.library.exceptions.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

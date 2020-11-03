@@ -1,5 +1,10 @@
-package com.msz.library;
+package com.msz.library.controllers;
 
+import com.msz.library.domain.ChangePasswordRequest;
+import com.msz.library.domain.CreateUserRequest;
+import com.msz.library.domain.UserResponse;
+import com.msz.library.security.CustomUserDetails;
+import com.msz.library.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.msz.library;
+package com.msz.library.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
