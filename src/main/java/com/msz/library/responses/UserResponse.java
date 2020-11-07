@@ -1,7 +1,8 @@
-package com.msz.library.domain;
+package com.msz.library.responses;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.msz.library.domain.UserEntity;
 
 import java.util.Objects;
 

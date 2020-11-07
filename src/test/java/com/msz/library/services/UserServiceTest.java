@@ -1,8 +1,8 @@
 package com.msz.library.services;
 
-import com.msz.library.domain.CreateUserRequest;
+import com.msz.library.requests.CreateUserRequest;
 import com.msz.library.domain.UserEntity;
-import com.msz.library.domain.UserResponse;
+import com.msz.library.responses.UserResponse;
 import com.msz.library.exceptions.UserAlreadyExistsException;
 import com.msz.library.exceptions.UserNotFoundException;
 import com.msz.library.repositories.UserRepository;

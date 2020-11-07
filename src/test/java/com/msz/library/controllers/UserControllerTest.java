@@ -2,9 +2,9 @@ package com.msz.library.controllers;
 
 import com.msz.library.advices.UserAlreadyExistsAdvice;
 import com.msz.library.advices.UserNotFoundAdvice;
-import com.msz.library.domain.CreateUserRequest;
+import com.msz.library.requests.CreateUserRequest;
 import com.msz.library.domain.UserEntity;
-import com.msz.library.domain.UserResponse;
+import com.msz.library.responses.UserResponse;
 import com.msz.library.exceptions.UserAlreadyExistsException;
 import com.msz.library.exceptions.UserNotFoundException;
 import com.msz.library.services.UserService;

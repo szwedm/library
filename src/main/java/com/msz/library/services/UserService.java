@@ -5,12 +5,15 @@ import com.msz.library.exceptions.PasswordsDoNotMatchException;
 import com.msz.library.exceptions.UserAlreadyExistsException;
 import com.msz.library.exceptions.UserNotFoundException;
 import com.msz.library.repositories.UserRepository;
+import com.msz.library.requests.ChangeNameRequest;
+import com.msz.library.requests.ChangePasswordRequest;
+import com.msz.library.requests.CreateUserRequest;
+import com.msz.library.responses.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,7 +21,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private static final Logger logger = Logger.getLogger("UserService");
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
