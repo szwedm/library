@@ -1,9 +1,8 @@
 package com.msz.library.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,6 +17,8 @@ public class UserEntity {
     private String email;
     private char[] password;
     private boolean active;
+    @OneToMany
+    private final List<BookEntity> borrowedBooks = new ArrayList<>();
 
     protected UserEntity() {
     }
@@ -43,6 +44,10 @@ public class UserEntity {
     }
 
     public char[] getPassword() { return password; }
+
+    public List<BookEntity> getBorrowedBooks() {
+        return borrowedBooks;
+    }
 
     public void setPassword(char[] password) {
         this.password = password;
