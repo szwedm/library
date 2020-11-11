@@ -1,9 +1,6 @@
 package com.msz.library.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -17,6 +14,8 @@ public class BookEntity {
     private String name;
     private String author;
     private boolean lent;
+    @ManyToOne
+    private UserEntity user;
 
     protected BookEntity() {
     }
@@ -26,6 +25,7 @@ public class BookEntity {
         this.name = name;
         this.author = author;
         this.lent = false;
+        this.user = null;
     }
 
     public String getIsbn() {
@@ -58,6 +58,14 @@ public class BookEntity {
 
     public void setLent(boolean lent) {
         this.lent = lent;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     @Override
