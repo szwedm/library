@@ -12,16 +12,19 @@ public class LibraryResponse {
     private final String bookId;
     private final String bookTitle;
     private final String bookAuthor;
+    private final boolean lent;
     private final String userId;
 
     @JsonCreator
     private LibraryResponse(@JsonProperty("bookId") String bookId,
                             @JsonProperty("bookTitle") String bookTitle,
                             @JsonProperty("bookAuthor") String bookAuthor,
+                            @JsonProperty("isLent") boolean lent,
                             @JsonProperty("userId") String userId) {
         this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
+        this.lent = lent;
         this.userId = userId;
     }
 
@@ -37,12 +40,16 @@ public class LibraryResponse {
         return bookAuthor;
     }
 
+    public boolean isLent() {
+        return lent;
+    }
+
     public String getUserId() {
         return userId;
     }
 
     public static LibraryResponse create(BookEntity book, UserEntity user) {
-        return new LibraryResponse(book.getIsbn(), book.getName(), book.getAuthor(), user.getId());
+        return new LibraryResponse(book.getIsbn(), book.getName(), book.getAuthor(), book.isLent(), user.getId());
     }
 
     @Override
@@ -67,6 +74,7 @@ public class LibraryResponse {
                 "bookId='" + bookId + '\'' +
                 ", bookTitle='" + bookTitle + '\'' +
                 ", bookAuthor='" + bookAuthor + '\'' +
+                ", lent=" + lent +
                 ", userId='" + userId + '\'' +
                 '}';
     }
