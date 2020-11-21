@@ -35,7 +35,7 @@ public class LibraryController {
             CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
             return new ResponseEntity<>(libraryService.borrowABook(user.getId(), request), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("/return-book")
@@ -45,6 +45,6 @@ public class LibraryController {
             CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
             return new ResponseEntity<>(libraryService.returnABook(user.getId(), request), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }
