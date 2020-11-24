@@ -6,6 +6,7 @@ import com.msz.library.repositories.BookRepository;
 import com.msz.library.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,29 +14,32 @@ public class DataLoader implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DataLoader(UserRepository userRepository, BookRepository bookRepository) {
+    public DataLoader(UserRepository userRepository, BookRepository bookRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.bookRepository = bookRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        loadDataToDB();
+        int count = userRepository.findAll().size();
+        if (count == 0 ) loadDataToDB();
     }
 
     private void loadDataToDB() {
         UserEntity user1 = new UserEntity(
                 "James Sunderland",
                 "james.sunderland@email.com",
-                "pyramid".toCharArray()
+                passwordEncoder.encode("pyramid").toCharArray()
         );
 
         UserEntity user2 = new UserEntity(
                 "Mary Shepherd",
                 "mary.shepherd@email.com",
-                "judgement".toCharArray()
+                passwordEncoder.encode("judgement").toCharArray()
         );
 
         userRepository.save(user1);

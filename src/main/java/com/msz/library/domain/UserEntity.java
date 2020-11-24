@@ -28,7 +28,7 @@ public class UserEntity {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.active = false;
+        this.active = true;
     }
 
     public String getId() {
